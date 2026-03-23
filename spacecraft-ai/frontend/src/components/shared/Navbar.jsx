@@ -8,10 +8,9 @@ function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   const navLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/design', label: 'Design' },
-    { path: '/saved', label: 'Saved' },
-    { path: '/about', label: 'About' }
+    { path: '/dashboard', label: 'Home' },
+    { path: '/about', label: 'About' },
+    { path: '/profile', label: 'Profile' }
   ];
 
   return (
@@ -19,7 +18,7 @@ function Navbar() {
       <div className="section-container">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 no-underline">
+          <Link to="/dashboard" className="flex items-center gap-2 no-underline">
             <div className="text-3xl">🚀</div>
             <div>
               <h1 className="text-2xl font-bold text-gradient">SpaceCraft AI</h1>
@@ -28,7 +27,7 @@ function Navbar() {
           </Link>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex gap-8">
+          <div className="flex gap-5 md:gap-8">
             {navLinks.map(({ path, label }) => (
               <Link
                 key={path}
@@ -50,10 +49,6 @@ function Navbar() {
             ))}
           </div>
 
-          {/* CTA Button */}
-          <Link to="/design" className="btn-primary text-sm">
-            Start Design
-          </Link>
         </div>
       </div>
     </nav>
