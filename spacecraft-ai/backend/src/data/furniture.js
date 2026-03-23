@@ -1,0 +1,298 @@
+// Mock data for furniture items
+export const furnitureDB = [
+  // Beds
+  {
+    id: 'bed-1',
+    name: 'Minimalist Metal Bed Frame',
+    category: 'bed',
+    price: 4500,
+    style: ['modern', 'minimal', 'industrial'],
+    dimensions: { length: 200, width: 120, height: 40 },
+    description: 'Simple metal frame bed, perfect for student rooms',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: true,
+    material: 'metal',
+    color: ['black', 'silver']
+  },
+  {
+    id: 'bed-2',
+    name: 'Wooden Queen Bed',
+    category: 'bed',
+    price: 12000,
+    style: ['traditional', 'scandinavian', 'cozy'],
+    dimensions: { length: 200, width: 160, height: 50 },
+    description: 'Classic wooden bed with natural finish',
+    rentalFriendly: false,
+    studentFriendly: false,
+    compact: false,
+    material: 'wood',
+    color: ['natural', 'walnut']
+  },
+  {
+    id: 'bed-3',
+    name: 'Loft Bed with Desk',
+    category: 'bed',
+    price: 8000,
+    style: ['modern', 'minimal', 'industrial'],
+    dimensions: { length: 200, width: 120, height: 180 },
+    description: 'Space-saving loft bed with built-in desk underneath',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: true,
+    material: 'metal',
+    color: ['black', 'white']
+  },
+  
+  // Desks
+  {
+    id: 'desk-1',
+    name: 'Compact Study Desk',
+    category: 'desk',
+    price: 3500,
+    style: ['modern', 'minimal', 'industrial'],
+    dimensions: { length: 100, width: 50, height: 75 },
+    description: 'Compact desk perfect for small rooms',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: true,
+    material: 'wood',
+    color: ['white', 'black', 'natural']
+  },
+  {
+    id: 'desk-2',
+    name: 'Professional Gaming Desk',
+    category: 'desk',
+    price: 8500,
+    style: ['modern', 'industrial'],
+    dimensions: { length: 140, width: 60, height: 75 },
+    description: 'Wide desk with cable management for gaming or work',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: false,
+    material: 'wood',
+    color: ['black', 'white']
+  },
+  {
+    id: 'desk-3',
+    name: 'Wall-Mounted Floating Desk',
+    category: 'desk',
+    price: 2500,
+    style: ['modern', 'minimal', 'scandinavian'],
+    dimensions: { length: 80, width: 40, height: 75 },
+    description: 'Space-saving wall-mounted desk',
+    rentalFriendly: false,
+    studentFriendly: true,
+    compact: true,
+    material: 'wood',
+    color: ['white', 'natural']
+  },
+
+  // Chairs
+  {
+    id: 'chair-1',
+    name: 'Ergonomic Office Chair',
+    category: 'chair',
+    price: 5000,
+    style: ['modern', 'minimal', 'industrial'],
+    dimensions: { length: 65, width: 65, height: 85 },
+    description: 'Comfortable office chair with lumbar support',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: false,
+    material: 'fabric',
+    color: ['black', 'grey']
+  },
+  {
+    id: 'chair-2',
+    name: 'Minimalist Wooden Chair',
+    category: 'chair',
+    price: 2000,
+    style: ['scandinavian', 'minimal', 'traditional'],
+    dimensions: { length: 50, width: 50, height: 80 },
+    description: 'Simple wooden dining or study chair',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: true,
+    material: 'wood',
+    color: ['natural', 'black']
+  },
+  {
+    id: 'chair-3',
+    name: 'Velvet Accent Chair',
+    category: 'chair',
+    price: 6500,
+    style: ['modern', 'boho', 'cozy'],
+    dimensions: { length: 70, width: 70, height: 80 },
+    description: 'Comfortable accent chair with soft velvet',
+    rentalFriendly: true,
+    studentFriendly: false,
+    compact: false,
+    material: 'velvet',
+    color: ['blue', 'burgundy', 'grey', 'terracotta']
+  },
+
+  // Sofas
+  {
+    id: 'sofa-1',
+    name: 'Compact 2-Seater Sofa',
+    category: 'sofa',
+    price: 12000,
+    style: ['modern', 'minimal'],
+    dimensions: { length: 150, width: 80, height: 75 },
+    description: 'Small sofa suitable for apartments',
+    rentalFriendly: true,
+    studentFriendly: false,
+    compact: true,
+    material: 'fabric',
+    color: ['grey', 'beige', 'blue']
+  },
+  {
+    id: 'sofa-2',
+    name: 'L-Shaped Corner Sofa',
+    category: 'sofa',
+    price: 22000,
+    style: ['modern', 'cozy', 'boho'],
+    dimensions: { length: 240, width: 180, height: 80 },
+    description: 'Spacious L-shaped sofa for living rooms',
+    rentalFriendly: false,
+    studentFriendly: false,
+    compact: false,
+    material: 'fabric',
+    color: ['grey', 'brown', 'terracotta']
+  },
+
+  // Lighting
+  {
+    id: 'light-1',
+    name: 'Minimalist Floor Lamp',
+    category: 'lighting',
+    price: 1500,
+    style: ['modern', 'minimal', 'scandinavian'],
+    dimensions: { length: 30, width: 30, height: 150 },
+    description: 'Sleek floor lamp for ambient lighting',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: true,
+    material: 'metal',
+    color: ['black', 'white', 'brass']
+  },
+  {
+    id: 'light-2',
+    name: 'Desk Lamp with USB',
+    category: 'lighting',
+    price: 1200,
+    style: ['modern', 'minimal', 'industrial'],
+    dimensions: { length: 20, width: 20, height: 50 },
+    description: 'Functional desk lamp with USB charging',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: true,
+    material: 'metal',
+    color: ['black', 'white', 'silver']
+  },
+  {
+    id: 'light-3',
+    name: 'Pendant Light Fixture',
+    category: 'lighting',
+    price: 2000,
+    style: ['modern', 'industrial', 'scandinavian'],
+    dimensions: { length: 25, width: 25, height: 30 },
+    description: 'Pendant light for overhead lighting',
+    rentalFriendly: false,
+    studentFriendly: false,
+    compact: true,
+    material: 'metal',
+    color: ['black', 'white', 'copper']
+  },
+
+  // Storage & Shelving
+  {
+    id: 'storage-1',
+    name: 'Wall-Mounted Shelves Set (3)',
+    category: 'storage',
+    price: 2000,
+    style: ['modern', 'minimal', 'scandinavian'],
+    dimensions: { length: 80, width: 20, height: 80 },
+    description: 'Set of 3 floating shelves for wall mounting',
+    rentalFriendly: false,
+    studentFriendly: true,
+    compact: true,
+    material: 'wood',
+    color: ['white', 'black', 'natural']
+  },
+  {
+    id: 'storage-2',
+    name: 'Compact Bookshelf',
+    category: 'storage',
+    price: 4500,
+    style: ['modern', 'minimal', 'scandinavian'],
+    dimensions: { length: 80, width: 30, height: 150 },
+    description: 'Narrow bookshelf for small spaces',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: true,
+    material: 'wood',
+    color: ['white', 'black', 'natural']
+  },
+  {
+    id: 'storage-3',
+    name: 'Under-Bed Storage Box',
+    category: 'storage',
+    price: 1500,
+    style: ['modern', 'minimal'],
+    dimensions: { length: 100, width: 50, height: 30 },
+    description: 'Rolling storage box for under-bed organization',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: true,
+    material: 'plastic',
+    color: ['black', 'white', 'grey']
+  },
+
+  // Decor & Accessories
+  {
+    id: 'decor-1',
+    name: 'Canvas Wall Art (Set of 3)',
+    category: 'decor',
+    price: 1800,
+    style: ['modern', 'minimal', 'boho'],
+    dimensions: { length: 40, width: 40, height: 5 },
+    description: 'Set of 3 abstract canvas paintings',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: true,
+    material: 'canvas',
+    color: ['black', 'white', 'gold']
+  },
+  {
+    id: 'decor-2',
+    name: 'Rug - Area Rug 120x180',
+    category: 'decor',
+    price: 3500,
+    style: ['modern', 'boho', 'scandinavian'],
+    dimensions: { length: 180, width: 120, height: 5 },
+    description: 'Comfortable area rug for living spaces',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: false,
+    material: 'wool',
+    color: ['grey', 'beige', 'blue', 'terracotta']
+  },
+  {
+    id: 'decor-3',
+    name: 'Potted Plants Bundle (5)',
+    category: 'decor',
+    price: 1200,
+    style: ['boho', 'scandinavian', 'modern'],
+    dimensions: { length: 30, width: 30, height: 40 },
+    description: 'Bundle of 5 small potted plants',
+    rentalFriendly: true,
+    studentFriendly: true,
+    compact: true,
+    material: 'ceramic',
+    color: ['green', 'terracotta']
+  },
+];
+
+export default furnitureDB;

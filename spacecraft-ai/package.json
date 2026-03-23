@@ -1,0 +1,10 @@
+{
+  "name": "spacecraft-ai",
+  "version": "1.0.0",
+  "description": "SpaceCraft AI - AI-Based Home Decor & Interior Visualization Platform",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}
