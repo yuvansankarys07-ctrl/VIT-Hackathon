@@ -56,7 +56,7 @@ function AppContent() {
               path="/dashboard"
               element={(
                 <ProtectedRoute>
-                  <DesignPage />
+                  <LandingPage />
                 </ProtectedRoute>
               )}
             />
