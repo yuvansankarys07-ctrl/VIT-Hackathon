@@ -1,8 +1,73 @@
 import { create } from 'zustand';
 
-// Design wizard store
+// Design wizard store - NEW IMAGE-BASED WORKFLOW
 export const useDesignStore = create((set) => ({
-  // Room data
+  // Uploaded image
+  uploadedImage: null,
+  imageId: null,
+  setUploadedImage: (image) => set({
+    uploadedImage: image,
+    imageId: image?.id || null,
+  }),
+
+  // Room type
+  roomType: 'living room',
+  setRoomType: (roomType) => set({ roomType }),
+
+  // Style selection
+  style: 'modern',
+  setStyle: (style) => set({ style }),
+
+  // Mood selection
+  mood: 'calm',
+  setMood: (mood) => set({ mood }),
+
+  // Budget
+  budget: 'medium',
+  customBudget: null,
+  setBudget: (budget) => set({ budget }),
+  setCustomBudget: (amount) => set({ customBudget: amount }),
+
+  // Priority
+  priority: 'aesthetics',
+  setPriority: (priority) => set({ priority }),
+
+  // Student mode flag
+  isStudentMode: false,
+  setStudentMode: (isStudentMode) => set({ isStudentMode }),
+
+  // Generated design result
+  generatedDesign: null,
+  setGeneratedDesign: (design) => set({ generatedDesign: design }),
+
+  // Generation state
+  isGenerating: false,
+  setIsGenerating: (isGenerating) => set({ isGenerating }),
+  generationError: null,
+  setGenerationError: (error) => set({ generationError: error }),
+
+  // Wizard step (1-5 for new workflow)
+  step: 1,
+  setStep: (step) => set({ step }),
+
+  // Reset store
+  reset: () => set({
+    uploadedImage: null,
+    imageId: null,
+    roomType: 'living room',
+    style: 'modern',
+    mood: 'calm',
+    budget: 'medium',
+    customBudget: null,
+    priority: 'aesthetics',
+    isStudentMode: false,
+    generatedDesign: null,
+    isGenerating: false,
+    generationError: null,
+    step: 1,
+  }),
+
+  // Legacy room data (for compatibility)
   roomData: {
     roomType: 'bedroom',
     area: 15,
@@ -18,7 +83,7 @@ export const useDesignStore = create((set) => ({
     roomData: { ...state.roomData, ...data },
   })),
 
-  // Style preferences
+  // Legacy style data (for compatibility)
   styleData: {
     styleId: 'style-modern',
   },
@@ -26,7 +91,7 @@ export const useDesignStore = create((set) => ({
     styleData: data,
   }),
 
-  // Budget data
+  // Legacy budget data (for compatibility)
   budgetData: {
     amount: 25000,
     mood: 'mood-productive',
@@ -47,32 +112,6 @@ export const useDesignStore = create((set) => ({
   setCustomizations: (mods) => set((state) => ({
     customizations: { ...state.customizations, ...mods },
   })),
-
-  // Wizard step
-  step: 1,
-  setStep: (step) => set({
-    step,
-  }),
-
-  // Reset store
-  reset: () => set({
-    roomData: {
-      roomType: 'bedroom',
-      area: 15,
-      length: 4,
-      width: 3.75,
-      height: 2.8,
-      doors: 1,
-      windows: 1,
-      existingFurniture: [],
-      imageUrl: null,
-    },
-    styleData: { styleId: 'style-modern' },
-    budgetData: { amount: 25000, mood: 'mood-productive', priority: 'balanced' },
-    currentPlan: null,
-    customizations: {},
-    step: 1,
-  }),
 }));
 
 // Projects store

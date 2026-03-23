@@ -6,7 +6,7 @@ import Footer from './components/shared/Footer';
 
 // Pages
 import LandingPage from './pages/LandingPage';
-import DesignPage from './pages/DesignPage';
+import RedesignPage from './pages/RedesignPage';
 import ResultsPage from './pages/ResultsPage';
 import SavedPage from './pages/SavedPage';
 import AboutPage from './pages/AboutPage';
@@ -34,7 +34,7 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/design" element={<DesignPage />} />
+            <Route path="/design" element={<RedesignPage />} />
             <Route path="/results" element={<ResultsPage />} />
             <Route path="/saved" element={<SavedPage />} />
             <Route path="/about" element={<AboutPage />} />

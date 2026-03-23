@@ -1,45 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useDesignStore, useProjectsStore } from '../store/designStore';
-import { projectsAPI } from '../utils/api';
-import ResultsDashboard from '../components/results/ResultsDashboard';
-import BeforeAfterComparison from '../components/results/BeforeAfterComparison';
-import BudgetBreakdown from '../components/results/BudgetBreakdown';
-import SpaceAnalysisCard from '../components/results/SpaceAnalysisCard';
-import CustomizationPanel from '../components/results/CustomizationPanel';
+import { projectsAPI, imageAPI } from '../utils/api';
+import { Download, Send, RotateCcw } from 'lucide-react';
 
+/**
+ * ResultsPage - NEW IMAGE-BASED RESULTS
+ * Display before/after room redesign with AI image generation
+ */
 function ResultsPage() {
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [projectName, setProjectName] = useState('');
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [sliderValue, setSliderValue] = useState(50);
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  const sliderRef = useRef(null);
 
   const {
-    currentPlan,
-    roomData,
-    styleData,
-    budgetData,
-    customizations,
-    setCurrentPlan,
-    setCustomizations
+    uploadedImage,
+    generatedDesign,
+    roomType,
+    style,
+    mood,
+    budget,
+    priority,
+    isStudentMode,
+    setGeneratedDesign,
+    setIsGenerating,
+    reset
   } = useDesignStore();
 
   const { addProject } = useProjectsStore();
 
-  if (!currentPlan) {
+  // Redirect if no generated design
+  if (!generatedDesign || !uploadedImage) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-bold mb-4">No Plan Generated</h1>
-        <p className="text-gray-600 mb-8">Please complete the design wizard first</p>
-        <button
-          onClick={() => navigate('/design')}
-          className="btn-primary"
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 px-4"
+      >
+        <motion.div
+          initial={{ scale: 0.9 }}
+          animate={{ scale: 1 }}
+          className="text-center"
         >
-          Go to Design Wizard
-        </button>
-      </div>
+          <h1 className="text-4xl font-bold mb-4 text-gray-900">No Design Generated</h1>
+          <p className="text-lg text-gray-600 mb-8">
+            Please complete the design wizard first
+          </p>
+          <button
+            onClick={() => navigate('/design')}
+            className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+          >
+            Go to Design Wizard
+          </button>
+        </motion.div>
+      </motion.div>
     );
   }
 
@@ -51,27 +71,36 @@ function ResultsPage() {
 
     try {
       setSaving(true);
-      toast.loading('Saving project...');
+      const toastId = toast.loading('Saving project...');
 
       const projectData = {
         name: projectName,
-        description: `${styleData.styleId} style room design - ${budgetData.amount} budget`,
-        roomData,
-        plan: currentPlan,
-        customizations
+        description: `${style} ${roomType} design - ${budget} budget`,
+        beforeImage: uploadedImage.url,
+        afterImage: generatedDesign.outputImage,
+        designData: {
+          roomType,
+          style,
+          mood,
+          budget,
+          priority,
+          isStudentMode
+        },
+        prompt: generatedDesign.prompt,
+        provider: generatedDesign.provider,
+        generationTime: generatedDesign.generationTime
       };
 
       const response = await projectsAPI.create(projectData);
-      
+
       if (response.data.success) {
         addProject(response.data.data);
-        toast.dismiss();
-        toast.success('Project saved successfully!');
+        toast.dismiss(toastId);
+        toast.success('✅ Project saved successfully!');
         setShowSaveModal(false);
         setProjectName('');
       }
     } catch (error) {
-      toast.dismiss();
       toast.error('Failed to save project');
       console.error(error);
     } finally {
@@ -79,128 +108,281 @@ function ResultsPage() {
     }
   };
 
-  const handleDownloadPDF = () => {
-    toast.success('PDF download feature coming soon!');
+  const handleRegenerate = async () => {
+    try {
+      setIsRegenerating(true);
+      const toastId = toast.loading('Regenerating design...');
+
+      const designData = {
+        imageId: generatedDesign.imageId,
+        roomType,
+        style,
+        mood,
+        budget,
+        priority,
+        isStudentMode
+      };
+
+      const response = await imageAPI.regenerateDesign(uploadedImage.id, designData);
+
+      if (response.data.success) {
+        setGeneratedDesign(response.data);
+        toast.dismiss(toastId);
+        toast.success('✨ Design regenerated!');
+        setSliderValue(50);
+      }
+    } catch (error) {
+      toast.error('Failed to regenerate design');
+      console.error(error);
+    } finally {
+      setIsRegenerating(false);
+    }
   };
 
-  const handleCustomize = (modifications) => {
-    setCustomizations(modifications);
-    // Here you would typically call an API to customize the plan
-    const updatedBudget = {
-      ...currentPlan.budgetBreakdown,
-      ...modifications.budgetUpdate
-    };
-    toast.success('Design updated!');
+  const handleDownloadImage = async () => {
+    try {
+      const link = document.createElement('a');
+      link.href = generatedDesign.outputImage;
+      link.download = `room-redesign-${Date.now()}.png`;
+      link.click();
+      toast.success('📥 Image downloaded!');
+    } catch (error) {
+      toast.error('Failed to download image');
+    }
   };
 
   return (
-    <div className="min-h-screen py-12 bg-gradient-to-b from-slate-50 to-white">
-      <div className="section-container max-w-6xl">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-12 px-4">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          className="text-center mb-12"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Your AI Interior Design
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
+            ✨ Your Room Transformed
           </h1>
           <p className="text-lg text-gray-600">
-            Complete with recommendations, budget breakdown, and space analysis
+            AI-powered interior redesign based on your {style} {roomType}
           </p>
         </motion.div>
 
-        {/* Main Results Dashboard */}
-        <ResultsDashboard plan={currentPlan} />
+        {/* Before/After Slider */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-12"
+        >
+          <div className="relative w-full aspect-video bg-gray-200 overflow-hidden">
+            {/* Before Image (Background) */}
+            <img
+              src={uploadedImage.url}
+              alt="Before"
+              className="w-full h-full object-cover"
+            />
 
-        {/* Before & After Comparison */}
-        <BeforeAfterComparison
-          beforeImage={roomData.imageUrl}
-          afterImage={currentPlan.styleSummary}
-        />
+            {/* After Image (With Slider Clip) */}
+            <div
+              ref={sliderRef}
+              className="absolute inset-0 overflow-hidden"
+              style={{ width: `${sliderValue}%` }}
+            >
+              <img
+                src={generatedDesign.outputImage}
+                alt="After"
+                className="w-screen h-full object-cover"
+                style={{ marginLeft: `-${100 - sliderValue}%` }}
+              />
+            </div>
 
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
-          <div className="lg:col-span-1">
-            {/* Space Analysis */}
-            <SpaceAnalysisCard scores={currentPlan.scores} />
+            {/* Slider Handle */}
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={sliderValue}
+              onChange={(e) => setSliderValue(Number(e.target.value))}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-col-resize z-30"
+            />
+
+            {/* Slider Line */}
+            <div
+              className="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-20"
+              style={{ left: `${sliderValue}%` }}
+            />
+
+            {/* Labels */}
+            <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-4 py-2 rounded-lg text-sm font-semibold z-10">
+              Before
+            </div>
+            <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-4 py-2 rounded-lg text-sm font-semibold z-10">
+              After
+            </div>
+
+            {/* Slider Instruction */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-75 text-white px-4 py-2 rounded-lg text-sm z-10">
+              ↔️ Drag to compare
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Design Summary */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12"
+        >
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <p className="text-gray-600 text-sm mb-1">Room Type</p>
+            <p className="text-2xl font-bold text-indigo-600">{roomType}</p>
           </div>
 
-          <div className="lg:col-span-2">
-            {/* Budget Breakdown */}
-            <BudgetBreakdown budget={currentPlan.budgetBreakdown} />
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <p className="text-gray-600 text-sm mb-1">Style</p>
+            <p className="text-2xl font-bold text-purple-600">{style}</p>
           </div>
-        </div>
 
-        {/* Customization Panel */}
-        <CustomizationPanel
-          plan={currentPlan}
-          onCustomize={handleCustomize}
-        />
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <p className="text-gray-600 text-sm mb-1">Mood</p>
+            <p className="text-2xl font-bold text-pink-600">{mood}</p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <p className="text-gray-600 text-sm mb-1">Budget</p>
+            <p className="text-2xl font-bold text-green-600">{budget}</p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <p className="text-gray-600 text-sm mb-1">Priority</p>
+            <p className="text-2xl font-bold text-blue-600">{priority}</p>
+          </div>
+        </motion.div>
+
+        {/* Generation Details */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-8 mb-12 border border-indigo-200"
+        >
+          <h2 className="text-2xl font-bold mb-4 text-gray-900">✨ Generation Details</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p className="text-gray-600 text-sm mb-2">Provider</p>
+              <p className="text-lg font-semibold capitalize">{generatedDesign.provider}</p>
+            </div>
+
+            <div>
+              <p className="text-gray-600 text-sm mb-2">Generation Time</p>
+              <p className="text-lg font-semibold">{generatedDesign.generationTime || '~30s'}</p>
+            </div>
+
+            <div className="md:col-span-2">
+              <p className="text-gray-600 text-sm mb-2">AI Prompt Used</p>
+              <div className="bg-white rounded-lg p-4 border border-gray-300 max-h-32 overflow-y-auto">
+                <p className="text-gray-700 text-sm font-mono">{generatedDesign.prompt}</p>
+              </div>
+            </div>
+
+            {isStudentMode && (
+              <div className="md:col-span-2 bg-blue-100 border border-blue-300 rounded-lg p-4">
+                <p className="text-blue-900 font-semibold">🎓 Student Mode Enabled</p>
+                <p className="text-blue-800 text-sm mt-1">
+                  This design is optimized for student/hostel rooms with budget-friendly, multi-purpose furniture and rental-safe solutions.
+                </p>
+              </div>
+            )}
+          </div>
+        </motion.div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap gap-4 mt-12 justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"
+        >
+          <button
+            onClick={handleDownloadImage}
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+          >
+            <Download size={20} />
+            Download Image
+          </button>
+
           <button
             onClick={() => setShowSaveModal(true)}
-            className="btn-primary"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all"
           >
-            💾 Save Project
+            <Send size={20} />
+            Save Project
           </button>
+
           <button
-            onClick={handleDownloadPDF}
-            className="btn-secondary"
+            onClick={handleRegenerate}
+            disabled={isRegenerating}
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all disabled:opacity-50"
           >
-            📄 Download PDF
+            <RotateCcw size={20} />
+            {isRegenerating ? 'Regenerating...' : 'Regenerate'}
           </button>
+
           <button
-            onClick={() => navigate('/saved')}
-            className="btn-secondary"
+            onClick={() => {
+              reset();
+              navigate('/design');
+            }}
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-all"
           >
-            📁 View Saved Projects
+            🔄 New Design
           </button>
-          <button
-            onClick={() => navigate('/design')}
-            className="btn-secondary"
-          >
-            🔄 Design Another Room
-          </button>
-        </div>
+        </motion.div>
 
         {/* Save Modal */}
         {showSaveModal && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4"
           >
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
-              className="bg-white rounded-2xl p-8 max-w-md w-full mx-4"
+              className="bg-white rounded-2xl p-8 max-w-md w-full"
             >
-              <h2 className="text-2xl font-bold mb-4">Save Project</h2>
-              <p className="text-gray-600 mb-4">Give your design project a name</p>
+              <h2 className="text-2xl font-bold mb-4 text-gray-900">Save Design Project</h2>
+              <p className="text-gray-600 mb-6">
+                Save this room redesign project to your collection
+              </p>
+
               <input
                 type="text"
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
                 placeholder="e.g., Modern Bedroom Redesign"
-                className="input-base mb-6"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-6 focus:outline-none focus:border-indigo-500"
               />
+
               <div className="flex gap-4">
                 <button
-                  onClick={() => setShowSaveModal(false)}
-                  className="btn-secondary flex-1"
+                  onClick={() => {
+                    setShowSaveModal(false);
+                    setProjectName('');
+                  }}
+                  className="flex-1 px-4 py-3 bg-gray-200 text-gray-900 rounded-lg font-semibold hover:bg-gray-300 transition-all disabled:opacity-50"
                   disabled={saving}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveProject}
-                  className="btn-primary flex-1"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
                   disabled={saving}
                 >
-                  {saving ? 'Saving...' : 'Save'}
+                  {saving ? 'Saving...' : 'Save Project'}
                 </button>
               </div>
             </motion.div>

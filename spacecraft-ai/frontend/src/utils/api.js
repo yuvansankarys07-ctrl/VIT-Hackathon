@@ -10,6 +10,37 @@ const apiClient = axios.create({
   },
 });
 
+// Create multipart form-data client for file uploads
+const uploadClient = axios.create({
+  baseURL: API_BASE,
+  timeout: 30000,
+});
+
+// Image API - NEW FOR AI REDESIGN
+export const imageAPI = {
+  // Upload room image
+  uploadImage: (file) => {
+    const formData = new FormData();
+    formData.append('roomImage', file);
+    return uploadClient.post('/images/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  // Generate AI room redesign
+  generateDesign: (designData) => apiClient.post('/images/generate', designData),
+
+  // Regenerate with different parameters
+  regenerateDesign: (imageId, designData) =>
+    apiClient.post('/images/regenerate', { imageId, ...designData }),
+
+  // Get provider status
+  getProviderStatus: () => apiClient.get('/images/provider-status'),
+
+  // Serve generated images (used as img src)
+  getImageUrl: (filename) => `${API_BASE}/images/uploads/${filename}`,
+};
+
 // Styles API
 export const stylesAPI = {
   getAll: () => apiClient.get('/styles'),
@@ -52,3 +83,4 @@ export const analysisAPI = {
 export const healthCheck = () => apiClient.get('/health');
 
 export default apiClient;
+
