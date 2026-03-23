@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useDesignStore, useProjectsStore } from '../store/designStore';
 import { projectsAPI, imageAPI } from '../utils/api';
-import { Download, Send, RotateCcw } from 'lucide-react';
+import { AlertTriangle, Download, Lightbulb, PaintBucket, RotateCcw, Send, Sofa, Sparkles, SunMedium, Palette } from 'lucide-react';
+import { PieChart, Pie, Cell, RadialBarChart, RadialBar, ResponsiveContainer } from 'recharts';
 
 /**
  * ResultsPage - NEW IMAGE-BASED RESULTS
@@ -17,6 +18,7 @@ function ResultsPage() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [sliderValue, setSliderValue] = useState(50);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [activeTab, setActiveTab] = useState('colors');
   const sliderRef = useRef(null);
 
   const {
@@ -29,7 +31,6 @@ function ResultsPage() {
     priority,
     isStudentMode,
     setGeneratedDesign,
-    setIsGenerating,
     reset
   } = useDesignStore();
 
@@ -151,195 +152,152 @@ function ResultsPage() {
     }
   };
 
+  const budgetPercentMap = { low: 38, medium: 62, high: 82, luxury: 95 };
+  const budgetPercent = budgetPercentMap[budget] || 58;
+  const budgetTone = budgetPercent < 55 ? '#16a34a' : budgetPercent < 80 ? '#eab308' : '#ef4444';
+
+  const spaceScoreData = [
+    { name: 'Walkability', value: 84, fill: '#3b82f6' },
+    { name: 'Storage', value: 72, fill: '#6366f1' },
+    { name: 'Light', value: 89, fill: '#8b5cf6' },
+    { name: 'Openness', value: 77, fill: '#06b6d4' }
+  ];
+
+  const customizationTabs = [
+    { id: 'colors', label: 'Colors', icon: Palette },
+    { id: 'furniture', label: 'Furniture', icon: Sofa },
+    { id: 'lighting', label: 'Lighting', icon: SunMedium },
+    { id: 'decor', label: 'Decor', icon: PaintBucket }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-12 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
-            ✨ Your Room Transformed
-          </h1>
-          <p className="text-lg text-gray-600">
-            AI-powered interior redesign based on your {style} {roomType}
-          </p>
-        </motion.div>
+    <div className="space-y-5">
+      <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold text-slate-900">Results Dashboard</h1>
+          <p className="text-slate-600 mt-1">Premium AI redesign output for your {style} {roomType}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={handleDownloadImage} className="btn-primary inline-flex items-center gap-2"><Download size={16} /> Download</button>
+          <button onClick={() => setShowSaveModal(true)} className="btn-secondary inline-flex items-center gap-2"><Send size={16} /> Save</button>
+          <button onClick={handleRegenerate} disabled={isRegenerating} className="btn-secondary inline-flex items-center gap-2 disabled:opacity-50"><RotateCcw size={16} /> {isRegenerating ? 'Regenerating...' : 'Regenerate'}</button>
+        </div>
+      </motion.div>
 
-        {/* Before/After Slider */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-12"
-        >
-          <div className="relative w-full aspect-video bg-gray-200 overflow-hidden">
-            {/* Before Image (Background) */}
-            <img
-              src={uploadedImage.url}
-              alt="Before"
-              className="w-full h-full object-cover"
-            />
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-12 xl:col-span-8 space-y-4">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-white/40 bg-white/80 backdrop-blur-xl shadow-soft overflow-hidden">
+            <div className="relative w-full aspect-video bg-slate-200 overflow-hidden">
+              <img src={uploadedImage.url} alt="Before" className="w-full h-full object-cover" />
 
-            {/* After Image (With Slider Clip) */}
-            <div
-              ref={sliderRef}
-              className="absolute inset-0 overflow-hidden"
-              style={{ width: `${sliderValue}%` }}
-            >
-              <img
-                src={generatedDesign.outputImage}
-                alt="After"
-                className="w-screen h-full object-cover"
-                style={{ marginLeft: `-${100 - sliderValue}%` }}
+              <div ref={sliderRef} className="absolute inset-0 overflow-hidden" style={{ width: `${sliderValue}%` }}>
+                <img src={generatedDesign.outputImage} alt="After" className="w-screen h-full object-cover" style={{ marginLeft: `-${100 - sliderValue}%` }} />
+              </div>
+
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={sliderValue}
+                onChange={(e) => setSliderValue(Number(e.target.value))}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-col-resize z-30"
               />
+
+              <div className="absolute top-0 bottom-0 w-[2px] bg-white shadow-lg z-20" style={{ left: `${sliderValue}%` }} />
+              <div className="absolute top-3 left-3 rounded-lg bg-black/55 text-white px-3 py-1 text-xs font-medium">Before</div>
+              <div className="absolute top-3 right-3 rounded-lg bg-black/55 text-white px-3 py-1 text-xs font-medium">After</div>
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-lg bg-black/65 text-white px-3 py-1 text-xs">Drag to compare</div>
             </div>
+          </motion.div>
 
-            {/* Slider Handle */}
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={sliderValue}
-              onChange={(e) => setSliderValue(Number(e.target.value))}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-col-resize z-30"
-            />
-
-            {/* Slider Line */}
-            <div
-              className="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-20"
-              style={{ left: `${sliderValue}%` }}
-            />
-
-            {/* Labels */}
-            <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-4 py-2 rounded-lg text-sm font-semibold z-10">
-              Before
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }} className="rounded-3xl border border-white/40 bg-white/80 backdrop-blur-xl shadow-soft p-5">
+            <h3 className="text-lg font-semibold text-slate-900 mb-3">Generation Details</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+              <div className="rounded-xl border border-slate-200 bg-white/90 p-3"><p className="text-xs text-slate-500">Room</p><p className="font-semibold text-slate-900">{roomType}</p></div>
+              <div className="rounded-xl border border-slate-200 bg-white/90 p-3"><p className="text-xs text-slate-500">Style</p><p className="font-semibold text-slate-900">{style}</p></div>
+              <div className="rounded-xl border border-slate-200 bg-white/90 p-3"><p className="text-xs text-slate-500">Mood</p><p className="font-semibold text-slate-900">{mood}</p></div>
+              <div className="rounded-xl border border-slate-200 bg-white/90 p-3"><p className="text-xs text-slate-500">Provider</p><p className="font-semibold text-slate-900 capitalize">{generatedDesign.provider}</p></div>
             </div>
-            <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-4 py-2 rounded-lg text-sm font-semibold z-10">
-              After
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 max-h-44 overflow-y-auto">
+              <p className="text-xs text-slate-500 mb-2">Prompt</p>
+              <p className="text-xs md:text-sm text-slate-700 whitespace-pre-wrap">{generatedDesign.prompt}</p>
             </div>
+            {isStudentMode && <p className="mt-3 text-sm rounded-xl bg-blue-50 border border-blue-200 text-blue-700 px-3 py-2">Student mode optimization was included in this redesign.</p>}
+          </motion.div>
+        </div>
 
-            {/* Slider Instruction */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-75 text-white px-4 py-2 rounded-lg text-sm z-10">
-              ↔️ Drag to compare
+        <aside className="col-span-12 xl:col-span-4 space-y-4">
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-white/40 bg-white/85 backdrop-blur-xl shadow-soft p-5">
+            <h3 className="text-lg font-semibold text-slate-900">Budget Card</h3>
+            <div className="h-40 mt-3">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={[{ name: 'Used', value: budgetPercent }, { name: 'Free', value: 100 - budgetPercent }]} dataKey="value" innerRadius={50} outerRadius={66} startAngle={90} endAngle={-270}>
+                    <Cell fill={budgetTone} />
+                    <Cell fill="#e2e8f0" />
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-          </div>
-        </motion.div>
+            <p className="text-center text-sm text-slate-600 -mt-5">Budget utilization: <span className="font-semibold">{budgetPercent}%</span></p>
+          </motion.div>
 
-        {/* Design Summary */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12"
-        >
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <p className="text-gray-600 text-sm mb-1">Room Type</p>
-            <p className="text-2xl font-bold text-indigo-600">{roomType}</p>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <p className="text-gray-600 text-sm mb-1">Style</p>
-            <p className="text-2xl font-bold text-purple-600">{style}</p>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <p className="text-gray-600 text-sm mb-1">Mood</p>
-            <p className="text-2xl font-bold text-pink-600">{mood}</p>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <p className="text-gray-600 text-sm mb-1">Budget</p>
-            <p className="text-2xl font-bold text-green-600">{budget}</p>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <p className="text-gray-600 text-sm mb-1">Priority</p>
-            <p className="text-2xl font-bold text-blue-600">{priority}</p>
-          </div>
-        </motion.div>
-
-        {/* Generation Details */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-8 mb-12 border border-indigo-200"
-        >
-          <h2 className="text-2xl font-bold mb-4 text-gray-900">✨ Generation Details</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <p className="text-gray-600 text-sm mb-2">Provider</p>
-              <p className="text-lg font-semibold capitalize">{generatedDesign.provider}</p>
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }} className="rounded-3xl border border-white/40 bg-white/85 backdrop-blur-xl shadow-soft p-5">
+            <h3 className="text-lg font-semibold text-slate-900">Space Score</h3>
+            <div className="h-40 mt-3">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadialBarChart innerRadius="25%" outerRadius="100%" data={spaceScoreData} startAngle={180} endAngle={0}>
+                  <RadialBar background dataKey="value" />
+                </RadialBarChart>
+              </ResponsiveContainer>
             </div>
-
-            <div>
-              <p className="text-gray-600 text-sm mb-2">Generation Time</p>
-              <p className="text-lg font-semibold">{generatedDesign.generationTime || '~30s'}</p>
+            <div className="space-y-2">
+              {spaceScoreData.map((row) => (
+                <div key={row.name} className="flex items-center justify-between text-sm text-slate-600">
+                  <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full" style={{ background: row.fill }} />{row.name}</div>
+                  <span className="font-medium text-slate-900">{row.value}</span>
+                </div>
+              ))}
             </div>
+          </motion.div>
 
-            <div className="md:col-span-2">
-              <p className="text-gray-600 text-sm mb-2">AI Prompt Used</p>
-              <div className="bg-white rounded-lg p-4 border border-gray-300 max-h-32 overflow-y-auto">
-                <p className="text-gray-700 text-sm font-mono">{generatedDesign.prompt}</p>
-              </div>
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="rounded-3xl border border-white/40 bg-white/85 backdrop-blur-xl shadow-soft p-5">
+            <h3 className="text-lg font-semibold text-slate-900">AI Insights</h3>
+            <div className="mt-3 space-y-2 text-sm text-slate-700">
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 flex items-start gap-2"><AlertTriangle size={16} className="text-amber-600 mt-0.5" /><span>Large bed reduces walking space near the window corner.</span></div>
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 flex items-start gap-2"><Lightbulb size={16} className="text-emerald-600 mt-0.5" /><span>Layered warm lighting improves mood consistency.</span></div>
+              <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 flex items-start gap-2"><Sparkles size={16} className="text-indigo-600 mt-0.5" /><span>{priority} priority is reflected in furniture and circulation.</span></div>
             </div>
+          </motion.div>
 
-            {isStudentMode && (
-              <div className="md:col-span-2 bg-blue-100 border border-blue-300 rounded-lg p-4">
-                <p className="text-blue-900 font-semibold">🎓 Student Mode Enabled</p>
-                <p className="text-blue-800 text-sm mt-1">
-                  This design is optimized for student/hostel rooms with budget-friendly, multi-purpose furniture and rental-safe solutions.
-                </p>
-              </div>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Action Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"
-        >
-          <button
-            onClick={handleDownloadImage}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
-          >
-            <Download size={20} />
-            Download Image
-          </button>
-
-          <button
-            onClick={() => setShowSaveModal(true)}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all"
-          >
-            <Send size={20} />
-            Save Project
-          </button>
-
-          <button
-            onClick={handleRegenerate}
-            disabled={isRegenerating}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all disabled:opacity-50"
-          >
-            <RotateCcw size={20} />
-            {isRegenerating ? 'Regenerating...' : 'Regenerate'}
-          </button>
-
-          <button
-            onClick={() => {
-              reset();
-              navigate('/design');
-            }}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-all"
-          >
-            🔄 New Design
-          </button>
-        </motion.div>
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }} className="rounded-3xl border border-white/40 bg-white/85 backdrop-blur-xl shadow-soft p-5 sticky top-24">
+            <h3 className="text-lg font-semibold text-slate-900">Customization Panel</h3>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {customizationTabs.map((tab) => {
+                const Icon = tab.icon;
+                const active = activeTab === tab.id;
+                return (
+                  <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`rounded-xl border px-3 py-2 text-sm flex items-center justify-center gap-2 transition-all ${active ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'}`}>
+                    <Icon size={14} /> {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+              Live update preview mode for <span className="font-semibold text-slate-900">{activeTab}</span>. Tap options to simulate refinements.
+            </div>
+            <button
+              onClick={() => {
+                reset();
+                navigate('/design');
+              }}
+              className="mt-4 w-full rounded-xl bg-slate-900 text-white py-2.5 text-sm font-medium hover:bg-slate-800 transition-all"
+            >
+              Start New Design
+            </button>
+          </motion.div>
+        </aside>
+      </div>
 
         {/* Save Modal */}
         {showSaveModal && (
@@ -388,7 +346,6 @@ function ResultsPage() {
             </motion.div>
           </motion.div>
         )}
-      </div>
     </div>
   );
 }

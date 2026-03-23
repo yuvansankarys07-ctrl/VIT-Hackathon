@@ -55,18 +55,18 @@ function SavedPage() {
   };
 
   return (
-    <div className="min-h-screen py-12 bg-gradient-to-b from-slate-50 to-white">
-      <div className="section-container max-w-6xl">
+    <div className="space-y-6">
+      <div className="max-w-6xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          className="mb-4"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-semibold text-slate-900 mb-2">
             Saved Projects
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-slate-600">
             Access and manage your saved interior design projects
           </p>
         </motion.div>
@@ -79,7 +79,7 @@ function SavedPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="card-soft p-12 text-center"
+            className="glass-card p-12 text-center"
           >
             <div className="text-6xl mb-4">📁</div>
             <h2 className="text-2xl font-bold mb-2">No Projects Yet</h2>
@@ -101,7 +101,7 @@ function SavedPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="card-soft p-6 hover:shadow-lg transition-all"
+                className="glass-card p-6 hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-bold text-gray-900 truncate">
@@ -109,10 +109,10 @@ function SavedPage() {
                   </h3>
                   <span className="text-2xl">🎨</span>
                 </div>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                <p className="text-slate-600 text-sm mb-4 line-clamp-2">
                   {project.description}
                 </p>
-                <div className="text-xs text-gray-500 mb-4">
+                <div className="text-xs text-slate-500 mb-4">
                   {new Date(project.createdAt).toLocaleDateString()}
                 </div>
                 <div className="flex gap-2">

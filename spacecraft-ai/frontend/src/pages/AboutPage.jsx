@@ -3,17 +3,16 @@ import { motion } from 'framer-motion';
 
 function AboutPage() {
   return (
-    <div className="min-h-screen py-12 bg-gradient-to-b from-slate-50 to-white">
-      <div className="section-container max-w-4xl">
+    <div className="space-y-6 max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-16"
+          className="mb-6"
         >
-          <h1 className="text-5xl font-bold text-gray-900 mb-4 text-gradient">
+          <h1 className="text-4xl font-semibold text-gray-900 mb-3 text-gradient">
             About SpaceCraft AI
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-slate-600">
             The future of affordable, intelligent interior design
           </p>
         </motion.div>
@@ -23,7 +22,7 @@ function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="card-soft p-8 mb-12"
+          className="glass-card p-8 mb-6"
         >
           <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
           <p className="text-lg text-gray-700 leading-relaxed">
@@ -37,7 +36,7 @@ function AboutPage() {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="card-soft p-8"
+            className="glass-card p-8"
           >
             <h3 className="text-2xl font-bold mb-4">The Problem</h3>
             <ul className="space-y-3 text-gray-700">
@@ -53,7 +52,7 @@ function AboutPage() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="card-soft p-8 bg-gradient-to-br from-purple-50 to-blue-50"
+            className="glass-card p-8 bg-gradient-to-br from-purple-50 to-blue-50"
           >
             <h3 className="text-2xl font-bold mb-4">Our Solution</h3>
             <ul className="space-y-3 text-gray-700">
@@ -71,7 +70,7 @@ function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="card-soft p-8 mb-12"
+          className="glass-card p-8 mb-6"
         >
           <h2 className="text-3xl font-bold mb-8">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -116,7 +115,7 @@ function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="card-soft p-8 bg-gradient-to-r from-indigo-50 to-purple-50 mb-12"
+          className="glass-card p-8 bg-gradient-to-r from-indigo-50 to-purple-50 mb-6"
         >
           <h2 className="text-3xl font-bold mb-6">Who We Serve</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -139,7 +138,7 @@ function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="card-soft p-8 mb-12"
+          className="glass-card p-8 mb-6"
         >
           <h2 className="text-3xl font-bold mb-6">Built With Modern Tech</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -175,7 +174,6 @@ function AboutPage() {
             Start Designing Now →
           </a>
         </motion.div>
-      </div>
     </div>
   );
 }

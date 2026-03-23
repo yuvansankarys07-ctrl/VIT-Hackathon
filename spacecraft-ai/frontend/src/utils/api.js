@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
+const AI_GENERATION_TIMEOUT = 180000;
 
 const apiClient = axios.create({
   baseURL: API_BASE,
@@ -28,11 +29,16 @@ export const imageAPI = {
   },
 
   // Generate AI room redesign
-  generateDesign: (designData) => apiClient.post('/images/generate', designData),
+  generateDesign: (designData) =>
+    apiClient.post('/images/generate', designData, { timeout: AI_GENERATION_TIMEOUT }),
+
+  // Generate from fixed cloudinary URL via backend Replicate flow
+  generateCloudinaryDesign: () =>
+    apiClient.get('/generate-image', { timeout: AI_GENERATION_TIMEOUT }),
 
   // Regenerate with different parameters
   regenerateDesign: (imageId, designData) =>
-    apiClient.post('/images/regenerate', { imageId, ...designData }),
+    apiClient.post('/images/regenerate', { imageId, ...designData }, { timeout: AI_GENERATION_TIMEOUT }),
 
   // Get provider status
   getProviderStatus: () => apiClient.get('/images/provider-status'),

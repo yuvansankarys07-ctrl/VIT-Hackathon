@@ -3,28 +3,10 @@
  * Handles file upload configuration using multer
  */
 
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import multer from 'multer';
 
-// Configure storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, '../../uploads');
-    
-    // Create upload directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'room-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Store file in memory so controller can persist with a controlled filename
+const storage = multer.memoryStorage();
 
 // File filter - only allow images
 const fileFilter = (req, file, cb) => {
@@ -46,4 +28,4 @@ const upload = multer({
   }
 });
 
-module.exports = upload;
+export default upload;

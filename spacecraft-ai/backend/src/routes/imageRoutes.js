@@ -3,17 +3,26 @@
  * Handles image upload, AI generation, and regeneration
  */
 
-const express = require('express');
+import express from 'express';
+import upload from '../middleware/uploadMiddleware.js';
+import {
+	uploadRoomImage,
+	generateRoomDesign,
+	generateRoomImage,
+	generateImageFromCloudinary,
+	regenerateRoomDesign,
+	getImage,
+	getProviderStatus
+} from '../controllers/imageController.js';
+
 const router = express.Router();
-const upload = require('../middleware/uploadMiddleware');
-const imageController = require('../controllers/imageController');
 
 /**
  * POST /api/images/upload
  * Upload a room image
  * Returns: {imageId, filename, filepath, url, metadata}
  */
-router.post('/upload', upload.single('roomImage'), imageController.uploadRoomImage);
+router.post('/upload', upload.single('roomImage'), uploadRoomImage);
 
 /**
  * POST /api/images/generate
@@ -31,7 +40,15 @@ router.post('/upload', upload.single('roomImage'), imageController.uploadRoomIma
  * }
  * Returns: {success, outputImage, prompt, designData, etc}
  */
-router.post('/generate', imageController.generateRoomDesign);
+router.post('/generate', generateRoomDesign);
+
+/**
+ * POST /api/images/generate-image
+ * Generate AI-redesigned room image from imageId, imageUrl, or uploaded file
+ * Body/form-data: { imageId | imageUrl | roomImage, style, mood, prompt }
+ */
+router.post('/generate-image', upload.single('roomImage'), generateRoomImage);
+router.get('/generate-image', generateImageFromCloudinary);
 
 /**
  * POST /api/images/regenerate
@@ -39,18 +56,18 @@ router.post('/generate', imageController.generateRoomDesign);
  * Body: {imageId, roomType, style, mood, budget, priority, provider}
  * Returns: {success, outputImage, ...}
  */
-router.post('/regenerate', imageController.regenerateRoomDesign);
+router.post('/regenerate', regenerateRoomDesign);
 
 /**
  * GET /api/images/uploads/:filename
  * Serve uploaded or generated images
  */
-router.get('/uploads/:filename', imageController.getImage);
+router.get('/uploads/:filename', getImage);
 
 /**
  * GET /api/images/provider-status
  * Get status of all image generation providers
  */
-router.get('/provider-status', imageController.getProviderStatus);
+router.get('/provider-status', getProviderStatus);
 
-module.exports = router;
+export default router;

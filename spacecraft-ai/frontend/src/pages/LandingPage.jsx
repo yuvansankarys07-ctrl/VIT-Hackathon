@@ -1,135 +1,143 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import HeroSection from '../components/landing/HeroSection';
-import FeatureCard from '../components/landing/FeatureCard';
-import StatsSection from '../components/landing/StatsSection';
-import CTASection from '../components/landing/CTASection';
+import { ArrowRight, WandSparkles, SlidersHorizontal, Sparkles, Upload, BarChart3 } from 'lucide-react';
 
 function LandingPage() {
   const navigate = useNavigate();
 
-  const features = [
+  const featureCards = [
     {
-      icon: '📸',
-      title: 'Upload Room Photo',
-      description: 'Share your room image and let our AI analyze the space'
+      icon: Upload,
+      title: 'Upload Room',
+      description: 'Drop a real room photo. AI keeps the structure and redesigns only interior layers.'
     },
     {
-      icon: '🎨',
-      title: 'Choose Your Style',
-      description: 'Pick from modern, minimal, boho, scandinavian, and more'
+      icon: WandSparkles,
+      title: 'Style Engine',
+      description: 'Pick mood, style and room type with visual cards and instant context previews.'
     },
     {
-      icon: '💰',
-      title: 'Set Your Budget',
-      description: 'Get recommendations tailored to your budget constraints'
+      icon: SlidersHorizontal,
+      title: 'Budget Intelligence',
+      description: 'Low, medium, high, or luxury outputs with practical material and furniture decisions.'
     },
     {
-      icon: '🤖',
-      title: 'AI Redesign',
-      description: 'Receive intelligent interior design suggestions and previews'
-    },
-    {
-      icon: '🎯',
-      title: 'Customize Everything',
-      description: 'Modify colors, furniture, and layout to match your vision'
-    },
-    {
-      icon: '📊',
-      title: 'Compare & Analyze',
-      description: 'See before/after views and detailed space analysis'
+      icon: BarChart3,
+      title: 'Live Results Dashboard',
+      description: 'Analyze space score, budget status, and generation details in one premium workspace.'
     }
   ];
 
   return (
-    <div className="w-full">
-      {/* Hero Section */}
-      <HeroSection onGetStarted={() => navigate('/design')} />
-
-      {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="section-container">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold mb-4 text-gradient">
-              How SpaceCraft AI Works
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Transform your room with AI-powered interior design that respects your budget
+    <div className="space-y-8">
+      <section className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card p-8 md:p-10 flex flex-col justify-between"
+        >
+          <div>
+            <p className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
+              <Sparkles size={14} /> New Experience
             </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, index) => (
-              <FeatureCard
-                key={index}
-                {...feature}
-                delay={index * 0.1}
-              />
-            ))}
+            <h1 className="mt-5 text-4xl md:text-5xl font-semibold leading-tight text-slate-900">
+              Design Your Room with AI
+              <span className="block text-gradient">Within Your Budget</span>
+            </h1>
+            <p className="mt-4 text-slate-600 max-w-xl">
+              SpaceCraft AI transforms your room into a premium interior concept with budget-aware decisions,
+              realistic proportions, and actionable insights in minutes.
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* USP Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-50 to-blue-50">
-        <div className="section-container">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
-          >
-            <div>
-              <h3 className="text-3xl font-bold mb-6 text-gray-900">
-                What Makes Us Different
-              </h3>
-              <ul className="space-y-4">
-                {[
-                  'Budget-aware furniture recommendations',
-                  'Space optimization analysis and warnings',
-                  'Before & after visual comparison',
-                  'Customization controls for total flexibility',
-                  'Perfect for students, renters, and homeowners',
-                  'AI-generated room redesign previews'
-                ].map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <span className="text-purple-500 font-bold text-xl mt-1">✓</span>
-                    <span className="text-gray-700 text-lg">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => navigate('/design')}
-                className="btn-primary mt-8"
-              >
-                Start Designing Now
-              </button>
-            </div>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <button onClick={() => navigate('/design')} className="btn-primary inline-flex items-center gap-2">
+              Start Designing <ArrowRight size={16} />
+            </button>
+            <button onClick={() => navigate('/results')} className="btn-secondary">
+              Try Demo
+            </button>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 26 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12 }}
+          className="glass-card p-6 md:p-8 relative overflow-hidden"
+        >
+          <div className="absolute -top-20 -right-20 h-48 w-48 rounded-full bg-purple-500/25 blur-3xl" />
+          <div className="absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-blue-500/25 blur-3xl" />
+          <div className="relative grid grid-cols-12 gap-4">
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl p-8 text-white text-center"
+              animate={{ y: [0, -6, 0] }}
+              transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+              className="col-span-7 rounded-2xl border border-white/40 bg-white/80 p-4 shadow-soft"
             >
-              <div className="text-6xl mb-4">🎨</div>
-              <h4 className="text-2xl font-bold mb-3">Smart Recommendations</h4>
-              <p className="text-purple-100">
-                Our AI engine considers room size, budget, style preferences, and practical constraints to generate the perfect interior design
-              </p>
+              <p className="text-xs text-slate-500">AI Pipeline</p>
+              <p className="font-semibold text-slate-900 mt-2">Analyzing Structure</p>
+              <div className="mt-4 h-2 rounded-full bg-slate-200">
+                <div className="h-2 w-3/4 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+              </div>
             </motion.div>
-          </motion.div>
-        </div>
+            <motion.div
+              animate={{ y: [0, 5, 0] }}
+              transition={{ repeat: Infinity, duration: 4.6, ease: 'easeInOut' }}
+              className="col-span-5 rounded-2xl border border-white/40 bg-white/75 p-4 shadow-soft"
+            >
+              <p className="text-xs text-slate-500">Budget Fit</p>
+              <p className="mt-2 text-2xl font-semibold text-slate-900">92%</p>
+            </motion.div>
+            <div className="col-span-12 rounded-2xl border border-white/40 bg-white/80 p-4 shadow-soft">
+              <p className="text-xs text-slate-500">Live Preview Cards</p>
+              <div className="mt-3 grid grid-cols-3 gap-3">
+                <div className="h-24 rounded-xl bg-gradient-to-br from-blue-500/25 to-indigo-500/20 border border-white/60" />
+                <div className="h-24 rounded-xl bg-gradient-to-br from-indigo-500/25 to-purple-500/20 border border-white/60" />
+                <div className="h-24 rounded-xl bg-gradient-to-br from-purple-500/25 to-fuchsia-500/20 border border-white/60" />
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
-      {/* Stats Section */}
-      <StatsSection />
+      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        {featureCards.map((card, index) => {
+          const Icon = card.icon;
 
-      {/* CTA Section */}
-      <CTASection />
+          return (
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.08 * index }}
+              className="glass-card p-5 hover:-translate-y-1 hover:shadow-glow transition-all duration-300"
+            >
+              <div className="h-11 w-11 rounded-xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 text-white flex items-center justify-center mb-4">
+                <Icon size={18} />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900">{card.title}</h3>
+              <p className="text-sm text-slate-600 mt-2">{card.description}</p>
+            </motion.div>
+          );
+        })}
+      </section>
+
+      <section className="glass-card p-6 md:p-8 grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div className="xl:col-span-2">
+          <h2 className="text-2xl font-semibold text-slate-900">Built Like a Real Product, Not a Prototype</h2>
+          <p className="mt-3 text-slate-600">
+            SpaceCraft AI combines a visual wizard, premium dashboard UI, and practical insights to deliver judge-ready,
+            portfolio-grade interior transformation demos.
+          </p>
+        </div>
+        <div className="rounded-2xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 p-5 text-white shadow-glow">
+          <p className="text-sm text-white/90">Launch the experience</p>
+          <button onClick={() => navigate('/design')} className="mt-3 rounded-xl bg-white/20 px-4 py-2 text-sm font-medium hover:bg-white/30 transition-all">
+            Open Design Wizard
+          </button>
+        </div>
+      </section>
     </div>
   );
 }

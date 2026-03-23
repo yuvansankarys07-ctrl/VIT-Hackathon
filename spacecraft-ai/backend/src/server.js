@@ -11,6 +11,9 @@ import furnitureRoutes from './routes/furnitureRoutes.js';
 import planRoutes from './routes/planRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import analysisRoutes from './routes/analysisRoutes.js';
+import imageRoutes from './routes/imageRoutes.js';
+import upload from './middleware/uploadMiddleware.js';
+import { generateRoomImage, generateImageFromCloudinary } from './controllers/imageController.js';
 
 dotenv.config();
 
@@ -18,7 +21,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(express.json({ limit: '50mb' }));
@@ -46,6 +49,9 @@ app.use('/api/furniture', furnitureRoutes);
 app.use('/api/plans', planRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/analysis', analysisRoutes);
+app.use('/api/images', imageRoutes);
+app.post('/api/generate-image', upload.single('roomImage'), generateRoomImage);
+app.get('/api/generate-image', generateImageFromCloudinary);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
