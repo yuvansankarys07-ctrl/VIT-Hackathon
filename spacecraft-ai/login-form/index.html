@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Form</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="auth-card" aria-label="Login and signup form">
+      <h1 id="form-title">Login Form</h1>
+
+      <div class="tabs" role="tablist" aria-label="Login and Signup tabs">
+        <button class="tab active" id="login-tab" type="button" data-mode="login" role="tab" aria-selected="true">Login</button>
+        <button class="tab" id="signup-tab" type="button" data-mode="signup" role="tab" aria-selected="false">Signup</button>
+      </div>
+
+      <form id="auth-form" novalidate>
+        <div class="field-group signup-only hidden" id="name-group">
+          <label for="name">Full Name</label>
+          <input id="name" name="name" type="text" placeholder="Enter your name" />
+        </div>
+
+        <div class="field-group">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="Enter your email" required />
+        </div>
+
+        <div class="field-group">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Enter your password" required />
+        </div>
+
+        <div class="field-group signup-only hidden" id="confirm-group">
+          <label for="confirm-password">Confirm Password</label>
+          <input id="confirm-password" name="confirmPassword" type="password" placeholder="Confirm your password" />
+        </div>
+
+        <p class="forgot-wrap" id="forgot-wrap">
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </p>
+
+        <button class="submit-btn" id="submit-btn" type="submit">Login</button>
+      </form>
+
+      <p class="footer-text" id="footer-text">
+        Not a member?
+        <a href="#" id="footer-link">Signup now</a>
+      </p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
